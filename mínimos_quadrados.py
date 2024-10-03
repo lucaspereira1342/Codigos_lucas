@@ -26,6 +26,6 @@ d_fit = d * x + e * y + f,
 
 
 RA_pluto = round((a * 955 + b * 1185 + c)/15, 3)
-dec_pluto = round(d * 955 + e * 1185 + f, 3)
+dec_pluto = round((d * 955 + e * 1185 + f), 3)
 
 print(f"A ascensão reta de plutão é: {RA_pluto} e a declinação é {dec_pluto}")
