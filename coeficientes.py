@@ -2,7 +2,7 @@ import numpy as np
 
 def alfa_final (dec, alfa_i, m_0):
     angulo_radiano = np.radians(dec)
-    mi_final = m_0/(np.cos(angulo_radiano) * 3600)
+    mi_final = (2.8e-6 * m_0)/(np.cos(angulo_radiano) * 3600)
     alfa = alfa_i + mi_final * (2010.33 - 2000)
 
     return alfa
