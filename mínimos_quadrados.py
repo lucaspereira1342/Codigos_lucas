@@ -4,10 +4,10 @@ from mpl_toolkits.mplot3d import Axes3D
 
 x = np.array([948.75, 1104.27, 1168.21, 1558.41, 1707.71])
 y = np.array([1146.11, 845.44, 883.46, 598.96, 608.911])
-RA_t = np.array([66079.568, 66086.6051, 66085.7285, 66092.4792, 66092.2717])
-dec = np.array([-65493.705, -65441.064, -65420.702, -65289.411, -65239.448])
+RA_grau = np.array([275.33151176, 275.36081429, 275.35725221, 275.38541670, 275.38460068])
+dec = np.array([-18.19257361, -18.1787021, -18.17197011, -18.13613816, -18.12220953])
 
-RA_arcs = RA_t*15
+RA_arcs = RA_grau*3600
 
 A = np.vstack([x, y, np.ones(len(x))]).T
 
@@ -28,4 +28,12 @@ d_fit = d * x + e * y + f,
 RA_pluto = round((a * 955 + b * 1185 + c)/15, 3)
 dec_pluto = round((d * 955 + e * 1185 + f), 3)
 
-print(f"A ascensão reta de plutão é: {RA_pluto} e a declinação é {dec_pluto}")
+def segundos_para_hora (seg):
+    horas = seg // 3600
+    minutos = (seg % 3600) // 60
+    segundos = seg % 60
+
+    return f"{horas}:{minutos}:{segundos}"
+
+
+print(f"A ascensão reta de plutão é: {segundos_para_hora(RA_pluto)} e a declinação é {dec_pluto}")
