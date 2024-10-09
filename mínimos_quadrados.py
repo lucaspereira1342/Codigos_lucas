@@ -25,8 +25,8 @@ d_fit = a * x + b * y + c,
 d_fit = d * x + e * y + f,
 
 
-RA_pluto = round((a * 955 + b * 1185 + c)/15, 3)
-dec_pluto = round((d * 955 + e * 1185 + f), 3)
+RA_pluto = (a * 955 + b * 1185 + c)/15
+dec_pluto = (d * 955 + e * 1185 + f)
 
 def segundos_para_hora (seg):
     horas = seg // 3600
