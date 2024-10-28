@@ -44,3 +44,16 @@ plt.xlim(0, 150)
 plt.plot(inversa, color='yellow', linewidth=1.5)
 
 plt.show()
+
+dominio_da_frequencia_vetor = np.array([sci.fft(sinal_ruidoso)])
+fs = 1/(tempo[1]-tempo[0])
+
+vetor_amplitude = np.abs(dominio_da_frequencia_vetor*np.conjugate(dominio_da_frequencia_vetor)/len(dominio_da_frequencia_vetor))
+vetor_frequencia = np.fft.fftfreq(len(dominio_da_frequencia), d=1/fs)
+
+amplitude = np.where(vetor_amplitude >=25)
+omega = np.where(vetor_frequencia >=0)
+
+
+print("Frequências:", omega)
+print("Amplitudes PSD:", amplitude)
