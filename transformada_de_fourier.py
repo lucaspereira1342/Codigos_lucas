@@ -49,6 +49,7 @@ vetor_sinal_limpo = abs(sinal_limpo)
 frequencia = np.fft.fftfreq(len(sinal_limpo), d=1/fs)
 
 amplitude = np.amax(vetor_sinal_limpo)
+valor_amplitude = np.argmax(vetor_sinal_limpo)
 #omega = vetor_frequencia[amplitude]
 
 #print(vetor_sinal_limpo)
