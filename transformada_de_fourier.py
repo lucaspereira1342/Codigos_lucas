@@ -4,62 +4,86 @@ import matplotlib.style as stl
 import scipy.fftpack as sci
 stl.use('ggplot')
 
-tempo = np.linspace(0, 10, 500)
+N = 500
+T = 1/50
+
+tempo = np.linspace(0, N*T, N, endpoint=False)
 sinal = np.sin(3*np.pi*tempo)
 
 ruido = np.random.normal(0, 1, tempo.shape)
 sinal_ruidoso = sinal + ruido
 
-dominio_da_frequencia = sci.fft(sinal_ruidoso)
+plt.figure(figsize=(15, 13))
 
-PSD = dominio_da_frequencia*np.conjugate(dominio_da_frequencia)/len(dominio_da_frequencia) #Calcula a Densidade Espectral de Potência (PSD), que mostra como a potência do sinal é distribuída ao longo das frequências, e permite observar em quais frequências o sinal possui maior ou menor potência.
+plt.subplot(2, 1, 1)
+plt.plot(tempo, sinal, color='magenta', linewidth=1.5)
+plt.xlabel('Tempo (s)')
+plt.ylabel('Amplitude')
+plt.title('Sinal')
 
-filtro = PSD >=25 #filtro dos valores da PSD (amplitude)
-sinal_limpo = PSD*filtro #Sinal com o filtro aplicado
+plt.subplot(2, 1, 2)
+plt.plot(tempo, sinal_ruidoso, color='green', linewidth=1.5, label='Ruido')
+plt.plot(tempo, sinal, color='magenta', linewidth=1.5, label='Sinal')
+plt.legend()
+plt.xlabel('Tempo (s)')
+plt.ylabel('Amplitude')
+plt.title('Sinal e Ruido')
+plt.show()
+
+dominio_da_frequencia = np.abs(sci.fft(sinal_ruidoso))
+frequencia = sci.fftfreq(N, T)[:N//2] #Frequências associadas a transformada de Fourier, considerando apenas a metade positiva.
+
+
+filtro = dominio_da_frequencia >=100 #filtro dos valores da amplitude
+sinal_limpo = dominio_da_frequencia*filtro #Sinal com o filtro aplicado
+amplitude_freq =  2/N*sinal_limpo[0:N//2] #Amplitude das frequências positivas
+
+plt.figure(figsize=(15, 13))
+
+plt.subplot(3, 1, 1)
+plt.plot(frequencia , 2/N*dominio_da_frequencia[0:N//2], color='navy', linewidth=1.5)
+plt.xlabel('Frequência (Hz)')
+plt.ylabel('Amplitude')
+plt.subplot(3, 1, 2)
+plt.plot(frequencia, amplitude_freq, color='blue', linewidth=1.5)
+plt.xlabel('Frequência (Hz)')
+plt.ylabel('Amplitude')
+
+plt.show()
 
 dominio_filtrado = filtro*dominio_da_frequencia #Domínio da frequência com as amplitudes filtradas
 inversa = sci.ifft(dominio_filtrado)
 
-plt.figure(figsize=(15, 13))
-
-plt.subplot(3, 2, 1)
-plt.xlim(0, 150)
-plt.plot(sinal, color='magenta', linewidth=1.5)
-
-plt.subplot(3, 2, 2)
-plt.plot(sinal_ruidoso, color='green', linewidth=1.5)
-plt.plot(sinal, color='magenta', linewidth=1.5)
-
-plt.subplot(3, 2, 3)
-plt.plot(dominio_da_frequencia, color='navy', linewidth=1.5)
-
-plt.subplot(3, 2, 4)
-plt.plot(PSD, color='black', linewidth=1.5)
-
-plt.subplot(3, 2, 5)
-plt.plot(sinal_limpo, color='blue', linewidth=1.5)
-
-plt.subplot(3, 2, 6)
-plt.xlim(0, 150)
-plt.plot(inversa, color='yellow', linewidth=1.5)
-
+plt.figure(figsize=(6, 4))
+plt.plot(tempo, np.real(inversa), color='red', linewidth=1.5)
+plt.xlabel('Tempo (s)')
+plt.ylabel('Amplitude')
+plt.title('Transformada Inversa')
 plt.show()
 
-vetor_sinal_limpo = abs(sinal_limpo)
-frequencia = np.fft.fftfreq(len(sinal_limpo), d=1/fs)
+amplitude = np.amax(amplitude_freq) #Valor máximo da amplitude
+amp_max = np.argmax(amplitude_freq) #posição no array onde a amplitude é maxima
+omega = frequencia[amp_max] #valor da frequência onde a amplitude é máxima
 
-amplitude = np.amax(vetor_sinal_limpo)
-valor_amplitude = np.argmax(vetor_sinal_limpo)
-valores = np.where(vetor_sinal_limpo == amplitude)[0]
-print(valores)
-#omega = vetor_frequencia[amplitude]
-
-#print(vetor_sinal_limpo)
 print('Amplitude:', amplitude)
-print("Frequências:", np.where(frequencia >=0))
-
-#plt.plot(omega, amplitude)
-#plt.show()
-
 print("Frequências:", omega)
-print("Amplitudes PSD:", amplitude)
+
+nova_funcao = amplitude*np.sin(2*np.pi*omega*tempo)
+
+plt.plot(tempo, nova_funcao, color='orange',linewidth=1.5, label='Nova Função')
+plt.plot(tempo, sinal, color='b', linewidth=1.5, label='Função Original')
+plt.legend()
+plt.xlabel('Tempo (s)')
+plt.ylabel('Amplitude')
+plt.show()
+
+phi = np.angle(inversa[amp_max])
+
+nova_funcao = amplitude*np.sin(2*np.pi*(omega*tempo + phi))
+
+plt.plot(tempo, nova_funcao, color='orange',linewidth=1.5, label='Nova Função')
+plt.plot(tempo, sinal, color='b', linewidth=1.5, label='Função Original')
+plt.legend()
+plt.xlabel('Tempo (s)')
+plt.ylabel('Amplitude')
+plt.show()
